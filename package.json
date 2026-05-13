@@ -1,0 +1,40 @@
+{
+  "name": "paraknob",
+  "version": "0.1.0",
+  "description": "Lightweight parameter GUI for creative coding",
+  "type": "module",
+  "main": "./dist/paraknob.js",
+  "module": "./dist/paraknob.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/paraknob.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "biome check src",
+    "fix": "biome check --write src",
+    "check": "biome check src && tsc --noEmit"
+  },
+  "keywords": [
+    "gui",
+    "parameter",
+    "creative-coding",
+    "tweakpane"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@types/node": "^25.7.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.12"
+  }
+}
