@@ -17,12 +17,15 @@ export class NumberControl {
   private key: string;
   private min: number;
   private max: number;
-  private step: number;
+  private step: number | null;
 
   private isDragging = false;
   private lastX = 0;
-  private startY = 0;
-  private lastDy = 0;
+  private lastY = 0;
+  private dirAverageX = 0;
+  private dirAverageY = 0;
+  private speedMultiplier = 1;
+  private rawValue = 0;
   private commitTimeout: number | null = null;
   private multiplierHideTimeout: number | null = null;
   private multiplierEl: HTMLElement | null = null;
@@ -41,7 +44,7 @@ export class NumberControl {
     const value = (target as Record<string, number>)[key];
     this.min = config.min ?? 0;
     this.max = config.max ?? Math.max(1, value * 2);
-    this.step = config.step ?? (this.max - this.min) / 100;
+    this.step = config.step ?? null;
 
     this.element = document.createElement('div');
     this.element.className = 'control control-number';
@@ -80,11 +83,19 @@ export class NumberControl {
     (this.target as Record<string, number>)[this.key] = v;
   }
 
-  private updateDisplay(): void {
-    const v = this.value;
-    this.valueEl.textContent = v.toFixed(2);
+  private updateDisplay(useRawValue = false): void {
+    const displayValue = this.value;
+    const gaugeValue = useRawValue ? this.rawValue : displayValue;
 
-    const ratio = (v - this.min) / (this.max - this.min);
+    // Display stepped value
+    if (this.step !== null && this.step >= 1) {
+      this.valueEl.textContent = displayValue.toFixed(0);
+    } else {
+      this.valueEl.textContent = displayValue.toFixed(2);
+    }
+
+    // Gauge uses raw value for smooth animation
+    const ratio = (gaugeValue - this.min) / (this.max - this.min);
     const clampedRatio = Math.max(0, Math.min(1, ratio));
     this.gauge.style.width = `${clampedRatio * 100}%`;
     this.knob.style.left = `calc(${clampedRatio * 100}% - 4px)`;
@@ -121,14 +132,12 @@ export class NumberControl {
     let x: number;
     let y: number;
 
-    // Horizontal: prefer right of bar, fallback to left
     if (barRect.right + margin + elWidth <= window.innerWidth) {
       x = barRect.right + margin;
     } else {
       x = barRect.left - elWidth - margin;
     }
 
-    // Vertical: center align with bar, adjust if out of bounds
     y = barRect.top + (barRect.height - elHeight) / 2;
     if (y < 0) {
       y = margin;
@@ -166,8 +175,11 @@ export class NumberControl {
 
     this.isDragging = true;
     this.lastX = e.clientX;
-    this.startY = e.clientY;
-    this.lastDy = 0;
+    this.lastY = e.clientY;
+    this.dirAverageX = 1;
+    this.dirAverageY = 0;
+    this.speedMultiplier = 1;
+    this.rawValue = this.value;
 
     this.bar.setPointerCapture(e.pointerId);
     this.bar.addEventListener('pointermove', this.onPointerMove);
@@ -179,28 +191,56 @@ export class NumberControl {
     if (!this.isDragging) return;
 
     const dx = e.clientX - this.lastX;
-    const dy = e.clientY - this.startY;
+    const dy = e.clientY - this.lastY;
 
-    // Calculate multiplier: up = precise (0.1x at -100px), down = fast (10x at +100px)
-    const dyNormalized = Math.max(-100, Math.min(100, dy)) / 100;
-    const multiplier = Math.pow(10, dyNormalized);
+    // Update direction average (smoothed over time)
+    const lerpFactor = 0.15;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    this.dirAverageX = this.dirAverageX + (absDx - this.dirAverageX) * lerpFactor;
+    this.dirAverageY = this.dirAverageY + (absDy - this.dirAverageY) * lerpFactor;
 
-    // Show multiplier indicator when vertical movement changes
-    if (Math.abs(dy - this.lastDy) > 2) {
-      this.showMultiplier(multiplier);
+    // Normalize direction average
+    const dirMag = Math.sqrt(this.dirAverageX ** 2 + this.dirAverageY ** 2);
+    const normX = dirMag > 0.001 ? this.dirAverageX / dirMag : 1;
+
+    // offsetWeight: 1 when horizontal, 0 when vertical (smoothstep)
+    const t = Math.max(0, Math.min(1, (normX - 0.4) / 0.2));
+    const offsetWeight = t * t * (3 - 2 * t);
+
+    // Adjust speed multiplier based on vertical movement (exponential)
+    // When dragging horizontally (offsetWeight≈1), speed changes slowly
+    // When dragging vertically (offsetWeight≈0), speed changes quickly
+    const speedLerp = 1 - offsetWeight;
+    this.speedMultiplier = Math.max(
+      0.01,
+      Math.min(100, this.speedMultiplier * Math.pow(0.98, dy * speedLerp))
+    );
+
+    // Show multiplier when not at default speed
+    if (Math.abs(this.speedMultiplier - 1) > 0.05) {
+      this.showMultiplier(this.speedMultiplier);
       this.scheduleHideMultiplier();
-      this.lastDy = dy;
     }
 
-    const baseSensitivity = (this.max - this.min) / this.bar.offsetWidth;
-    let newValue = this.value + dx * baseSensitivity * multiplier;
+    // Calculate value change
+    const baseSpeed = (this.max - this.min) / this.bar.offsetWidth;
+    const delta = dx * baseSpeed * this.speedMultiplier * offsetWeight;
 
-    newValue = Math.round(newValue / this.step) * this.step;
-    newValue = Math.max(this.min, Math.min(this.max, newValue));
+    // Update raw value (continuous, for smooth gauge)
+    this.rawValue = Math.max(this.min, Math.min(this.max, this.rawValue + delta));
 
-    this.value = newValue;
+    // Stepped value for display and target
+    let steppedValue = this.rawValue;
+    if (this.step !== null) {
+      steppedValue = Math.round(this.rawValue / this.step) * this.step;
+      steppedValue = Math.max(this.min, Math.min(this.max, steppedValue));
+    }
+
+    this.value = steppedValue;
     this.lastX = e.clientX;
-    this.updateDisplay();
+    this.lastY = e.clientY;
+    this.updateDisplay(true);
     this.scheduleCommit();
   };
 
@@ -208,7 +248,7 @@ export class NumberControl {
     if (!this.isDragging) return;
 
     this.isDragging = false;
-    this.lastDy = 0;
+    this.speedMultiplier = 1;
     this.hideMultiplier();
     if (this.multiplierHideTimeout !== null) {
       clearTimeout(this.multiplierHideTimeout);
@@ -227,7 +267,7 @@ export class NumberControl {
     input.value = this.value.toString();
     input.min = this.min.toString();
     input.max = this.max.toString();
-    input.step = this.step.toString();
+    input.step = this.step?.toString() ?? 'any';
 
     this.valueEl.textContent = '';
     this.valueEl.appendChild(input);
