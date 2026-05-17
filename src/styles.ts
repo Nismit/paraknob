@@ -150,7 +150,6 @@ export const styles = `
 }
 
 .folder-content {
-  padding-left: 12px;
   overflow: hidden;
 }
 
