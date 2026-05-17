@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "build:pages": "vite build --mode pages",
     "lint": "biome check src",
     "fix": "biome check --write src",
     "check": "biome check src && tsc --noEmit"
