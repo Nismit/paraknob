@@ -160,7 +160,7 @@ export const styles = `
 
 /* Controls */
 .control {
-  padding: 4px 12px;
+  padding: 6px 12px;
 }
 
 /* Number Control */
@@ -169,7 +169,7 @@ export const styles = `
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 24px;
+  height: 28px;
   padding: 0 8px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
