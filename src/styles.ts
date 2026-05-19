@@ -237,6 +237,7 @@ export const styles = `
   --select-value-color: #fff;
   --select-arrow-color: rgba(var(--accent-rgb), 0.7);
 
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -252,39 +253,30 @@ export const styles = `
 
 .select-label {
   color: var(--select-label-color);
+  pointer-events: none;
 }
 
-.select-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.select-input {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: none;
+.select-value {
   color: var(--select-value-color);
-  font-size: inherit;
-  font-family: inherit;
-  cursor: pointer;
-  outline: none;
-  padding-right: 14px;
-}
-
-.select-input:focus {
-  color: rgb(var(--accent-rgb));
+  pointer-events: none;
+  margin-right: 12px;
 }
 
 .select-arrow {
-  position: absolute;
-  right: 0;
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 5px solid var(--select-arrow-color);
   pointer-events: none;
+}
+
+.select-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 `;

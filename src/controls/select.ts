@@ -6,6 +6,7 @@ export interface SelectControlConfig {
 export class SelectControl {
   readonly element: HTMLElement;
   private selectEl: HTMLSelectElement;
+  private valueEl: HTMLElement;
   private onChange?: (value: string) => void;
 
   private target: object;
@@ -31,9 +32,14 @@ export class SelectControl {
     labelEl.className = 'select-label';
     labelEl.textContent = config.label ?? key;
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'select-wrapper';
+    this.valueEl = document.createElement('span');
+    this.valueEl.className = 'select-value';
+    this.valueEl.textContent = this.value;
 
+    const arrow = document.createElement('span');
+    arrow.className = 'select-arrow';
+
+    // Invisible select covers the entire bar for full-width tap target
     this.selectEl = document.createElement('select');
     this.selectEl.className = 'select-input';
 
@@ -45,17 +51,15 @@ export class SelectControl {
       this.selectEl.appendChild(option);
     }
 
-    const arrow = document.createElement('span');
-    arrow.className = 'select-arrow';
-
-    wrapper.appendChild(this.selectEl);
-    wrapper.appendChild(arrow);
     bar.appendChild(labelEl);
-    bar.appendChild(wrapper);
+    bar.appendChild(this.valueEl);
+    bar.appendChild(arrow);
+    bar.appendChild(this.selectEl);
     this.element.appendChild(bar);
 
     this.selectEl.addEventListener('change', () => {
       this.value = this.selectEl.value;
+      this.valueEl.textContent = this.value;
       this.onChange?.(this.value);
     });
   }
