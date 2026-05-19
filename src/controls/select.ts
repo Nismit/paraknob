@@ -36,8 +36,14 @@ export class SelectControl {
     this.valueEl.className = 'select-value';
     this.valueEl.textContent = this.value;
 
+    const right = document.createElement('div');
+    right.className = 'select-right';
+
     const arrow = document.createElement('span');
     arrow.className = 'select-arrow';
+
+    right.appendChild(this.valueEl);
+    right.appendChild(arrow);
 
     // Invisible select covers the entire bar for full-width tap target
     this.selectEl = document.createElement('select');
@@ -52,8 +58,7 @@ export class SelectControl {
     }
 
     bar.appendChild(labelEl);
-    bar.appendChild(this.valueEl);
-    bar.appendChild(arrow);
+    bar.appendChild(right);
     bar.appendChild(this.selectEl);
     this.element.appendChild(bar);
 

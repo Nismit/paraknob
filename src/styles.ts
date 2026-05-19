@@ -256,10 +256,15 @@ export const styles = `
   pointer-events: none;
 }
 
+.select-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
 .select-value {
   color: var(--select-value-color);
-  pointer-events: none;
-  margin-right: 12px;
 }
 
 .select-arrow {
