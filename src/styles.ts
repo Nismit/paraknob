@@ -228,4 +228,60 @@ export const styles = `
   text-align: right;
   outline: none;
 }
+
+/* Select Control */
+.select-bar {
+  --select-bg: rgba(255, 255, 255, 0.08);
+  --select-bg-hover: rgba(255, 255, 255, 0.12);
+  --select-label-color: #aaa;
+  --select-value-color: #fff;
+  --select-arrow-color: rgba(var(--accent-rgb), 0.7);
+
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  background: var(--select-bg);
+  border-radius: 4px;
+}
+
+.select-bar:hover {
+  background: var(--select-bg-hover);
+}
+
+.select-label {
+  color: var(--select-label-color);
+  pointer-events: none;
+}
+
+.select-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.select-value {
+  color: var(--select-value-color);
+}
+
+.select-arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--select-arrow-color);
+  pointer-events: none;
+}
+
+.select-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
 `;

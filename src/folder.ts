@@ -1,6 +1,6 @@
-import { NumberControl, type NumberControlConfig } from './controls';
+import { NumberControl, type NumberControlConfig, SelectControl, type SelectControlConfig } from './controls';
 
-type ControlConfig = NumberControlConfig;
+type ControlConfig = NumberControlConfig | SelectControlConfig;
 
 type AddConfig<T extends object> = {
   [K in keyof T]?: ControlConfig;
@@ -66,7 +66,10 @@ export class Folder {
       const options = config[key as keyof T] ?? {};
 
       if (typeof value === 'number') {
-        const control = new NumberControl(target, key, options);
+        const control = new NumberControl(target, key, options as NumberControlConfig);
+        this.content.appendChild(control.element);
+      } else if (typeof value === 'string' && 'options' in (options ?? {})) {
+        const control = new SelectControl(target, key, options as SelectControlConfig);
         this.content.appendChild(control.element);
       }
     }
