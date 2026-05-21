@@ -1,4 +1,4 @@
-import { NumberControl, type NumberControlConfig, SelectControl, type SelectControlConfig } from './controls';
+import { ButtonControl, NumberControl, type NumberControlConfig, SelectControl, type SelectControlConfig, ToggleControl, type ToggleControlConfig } from './controls';
 import { createDragHandler } from './drag';
 import { Folder, type FolderConfig } from './folder';
 import { styles } from './styles';
@@ -9,7 +9,7 @@ export interface ParaKnobConfig {
   floating?: boolean;
 }
 
-export type ControlConfig = NumberControlConfig | SelectControlConfig;
+export type ControlConfig = NumberControlConfig | SelectControlConfig | ToggleControlConfig;
 
 export type AddConfig<T extends object> = {
   [K in keyof T]?: ControlConfig;
@@ -138,7 +138,10 @@ export class ParaKnob {
       const value = target[key as keyof T];
       const options = config[key as keyof T] ?? {};
 
-      if (typeof value === 'number') {
+      if (typeof value === 'number' && 'toggle' in (options ?? {})) {
+        const control = new ToggleControl(target, key, options as ToggleControlConfig);
+        this.content.appendChild(control.element);
+      } else if (typeof value === 'number') {
         const control = new NumberControl(target, key, options as NumberControlConfig);
         this.content.appendChild(control.element);
       } else if (typeof value === 'string' && 'options' in (options ?? {})) {
@@ -147,6 +150,12 @@ export class ParaKnob {
       }
     }
 
+    return this;
+  }
+
+  addButton(label: string, onClick: () => void): this {
+    const control = new ButtonControl(label, onClick);
+    this.content.appendChild(control.element);
     return this;
   }
 

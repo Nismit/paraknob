@@ -284,4 +284,104 @@ export const styles = `
   opacity: 0;
   cursor: pointer;
 }
+
+/* Button Control */
+.button-btn {
+  width: 100%;
+  height: 28px;
+  padding: 0 12px;
+  background: rgba(var(--accent-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  border-radius: 4px;
+  color: rgb(var(--accent-rgb));
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.button-btn:hover {
+  background: rgba(var(--accent-rgb), 0.22);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+
+.button-btn:active {
+  background: rgba(var(--accent-rgb), 0.35);
+}
+
+/* Toggle Control */
+.toggle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle-bar:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.toggle-label {
+  color: #aaa;
+}
+
+.toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-state-label {
+  font-size: 10px;
+  transition: color 0.15s;
+}
+
+.toggle-off-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.control-toggle.toggle-on .toggle-off-label {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.toggle-on-label {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.control-toggle.toggle-on .toggle-on-label {
+  color: rgb(var(--accent-rgb));
+}
+
+.toggle-track {
+  position: relative;
+  width: 28px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  transition: background 0.2s;
+}
+
+.control-toggle.toggle-on .toggle-track {
+  background: rgba(var(--accent-rgb), 0.5);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  background: #ccc;
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.control-toggle.toggle-on .toggle-thumb {
+  transform: translateX(14px);
+  background: rgb(var(--accent-rgb));
+}
 `;
