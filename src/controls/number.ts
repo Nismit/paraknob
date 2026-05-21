@@ -120,7 +120,10 @@ export class NumberControl {
       document.body.appendChild(this.multiplierEl);
     }
 
-    const text = multiplier < 1 ? `×${multiplier.toFixed(2)}` : `×${multiplier.toFixed(1)}`;
+    const text =
+      multiplier < 1
+        ? `×${multiplier.toFixed(2)}`
+        : `×${multiplier.toFixed(1)}`;
     this.multiplierEl.textContent = text;
     this.multiplierEl.style.display = 'block';
 
@@ -197,8 +200,10 @@ export class NumberControl {
     const lerpFactor = 0.15;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
-    this.dirAverageX = this.dirAverageX + (absDx - this.dirAverageX) * lerpFactor;
-    this.dirAverageY = this.dirAverageY + (absDy - this.dirAverageY) * lerpFactor;
+    this.dirAverageX =
+      this.dirAverageX + (absDx - this.dirAverageX) * lerpFactor;
+    this.dirAverageY =
+      this.dirAverageY + (absDy - this.dirAverageY) * lerpFactor;
 
     // Normalize direction average
     const dirMag = Math.sqrt(this.dirAverageX ** 2 + this.dirAverageY ** 2);
@@ -214,7 +219,7 @@ export class NumberControl {
     const speedLerp = 1 - offsetWeight;
     this.speedMultiplier = Math.max(
       0.01,
-      Math.min(100, this.speedMultiplier * Math.pow(0.98, dy * speedLerp))
+      Math.min(100, this.speedMultiplier * 0.98 ** (dy * speedLerp)),
     );
 
     // Show multiplier when not at default speed
@@ -228,7 +233,10 @@ export class NumberControl {
     const delta = dx * baseSpeed * this.speedMultiplier * offsetWeight;
 
     // Update raw value (continuous, for smooth gauge)
-    this.rawValue = Math.max(this.min, Math.min(this.max, this.rawValue + delta));
+    this.rawValue = Math.max(
+      this.min,
+      Math.min(this.max, this.rawValue + delta),
+    );
 
     // Stepped value for display and target
     let steppedValue = this.rawValue;
