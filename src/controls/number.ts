@@ -302,6 +302,10 @@ export class NumberControl {
     });
   };
 
+  refresh(): void {
+    this.updateDisplay();
+  }
+
   dispose(): void {
     if (this.commitTimeout !== null) {
       clearTimeout(this.commitTimeout);

@@ -17,6 +17,8 @@ export class ButtonControl {
     this.element.appendChild(this.btn);
   }
 
+  refresh(): void {}
+
   dispose(): void {
     this.btn.removeEventListener('click', this.onClick);
   }

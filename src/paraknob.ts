@@ -26,6 +26,8 @@ export type AddConfig<T extends object> = {
   [K in keyof T]?: ControlConfig;
 };
 
+type Refreshable = { refresh(): void };
+
 export class ParaKnob {
   private host: HTMLElement;
   private shadow: ShadowRoot;
@@ -36,6 +38,7 @@ export class ParaKnob {
   private cleanupDrag: (() => void) | null = null;
   private _floating: boolean;
   private _collapsed = false;
+  private refreshables: Refreshable[] = [];
 
   constructor(config: ParaKnobConfig = {}) {
     this._floating = config.floating ?? true;
@@ -156,6 +159,7 @@ export class ParaKnob {
           options as ToggleControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       } else if (typeof value === 'number') {
         const control = new NumberControl(
           target,
@@ -163,6 +167,7 @@ export class ParaKnob {
           options as NumberControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       } else if (typeof value === 'string' && 'options' in (options ?? {})) {
         const control = new SelectControl(
           target,
@@ -170,6 +175,7 @@ export class ParaKnob {
           options as SelectControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       }
     }
 
@@ -185,7 +191,12 @@ export class ParaKnob {
   addFolder(config: FolderConfig): Folder {
     const folder = new Folder(config);
     this.content.appendChild(folder.element);
+    this.refreshables.push(folder);
     return folder;
+  }
+
+  refresh(): void {
+    for (const r of this.refreshables) r.refresh();
   }
 
   dispose(): void {
