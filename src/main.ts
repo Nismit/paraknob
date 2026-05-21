@@ -20,9 +20,20 @@ knob.add(params, {
   intensity: { min: 0, max: 10 },
   count: { min: 0, max: 10, step: 1, label: 'Count (Integer)' },
   enabled: { toggle: true, label: 'Enabled', onLabel: 'on', offLabel: 'off' },
-  visible: { toggle: true, label: 'Visible', onLabel: 'true', offLabel: 'false' },
-  blendMode: { options: ['normal', 'multiply', 'screen', 'overlay'], label: 'Blend Mode' },
-  easing: { options: ['linear', 'ease-in', 'ease-out', 'ease-in-out'], label: 'Easing' },
+  visible: {
+    toggle: true,
+    label: 'Visible',
+    onLabel: 'true',
+    offLabel: 'false',
+  },
+  blendMode: {
+    options: ['normal', 'multiply', 'screen', 'overlay'],
+    label: 'Blend Mode',
+  },
+  easing: {
+    options: ['linear', 'ease-in', 'ease-out', 'ease-in-out'],
+    label: 'Easing',
+  },
 });
 
 knob.addButton('Reset', () => {

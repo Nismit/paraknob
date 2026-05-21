@@ -1,6 +1,17 @@
-import { ButtonControl, NumberControl, type NumberControlConfig, SelectControl, type SelectControlConfig, ToggleControl, type ToggleControlConfig } from './controls';
+import {
+  ButtonControl,
+  NumberControl,
+  type NumberControlConfig,
+  SelectControl,
+  type SelectControlConfig,
+  ToggleControl,
+  type ToggleControlConfig,
+} from './controls';
 
-type ControlConfig = NumberControlConfig | SelectControlConfig | ToggleControlConfig;
+type ControlConfig =
+  | NumberControlConfig
+  | SelectControlConfig
+  | ToggleControlConfig;
 
 type AddConfig<T extends object> = {
   [K in keyof T]?: ControlConfig;
@@ -66,13 +77,25 @@ export class Folder {
       const options = config[key as keyof T] ?? {};
 
       if (typeof value === 'number' && 'toggle' in (options ?? {})) {
-        const control = new ToggleControl(target, key, options as ToggleControlConfig);
+        const control = new ToggleControl(
+          target,
+          key,
+          options as ToggleControlConfig,
+        );
         this.content.appendChild(control.element);
       } else if (typeof value === 'number') {
-        const control = new NumberControl(target, key, options as NumberControlConfig);
+        const control = new NumberControl(
+          target,
+          key,
+          options as NumberControlConfig,
+        );
         this.content.appendChild(control.element);
       } else if (typeof value === 'string' && 'options' in (options ?? {})) {
-        const control = new SelectControl(target, key, options as SelectControlConfig);
+        const control = new SelectControl(
+          target,
+          key,
+          options as SelectControlConfig,
+        );
         this.content.appendChild(control.element);
       }
     }
