@@ -22,11 +22,14 @@ export interface FolderConfig {
   expanded?: boolean;
 }
 
+type Refreshable = { refresh(): void };
+
 export class Folder {
   readonly element: HTMLElement;
   private header: HTMLElement;
   private content: HTMLElement;
   private expanded: boolean;
+  private refreshables: Refreshable[] = [];
 
   constructor(config: FolderConfig) {
     this.expanded = config.expanded ?? true;
@@ -83,6 +86,7 @@ export class Folder {
           options as ToggleControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       } else if (typeof value === 'number') {
         const control = new NumberControl(
           target,
@@ -90,6 +94,7 @@ export class Folder {
           options as NumberControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       } else if (typeof value === 'string' && 'options' in (options ?? {})) {
         const control = new SelectControl(
           target,
@@ -97,6 +102,7 @@ export class Folder {
           options as SelectControlConfig,
         );
         this.content.appendChild(control.element);
+        this.refreshables.push(control);
       }
     }
 
@@ -112,7 +118,12 @@ export class Folder {
   addFolder(config: FolderConfig): Folder {
     const folder = new Folder(config);
     this.content.appendChild(folder.element);
+    this.refreshables.push(folder);
     return folder;
+  }
+
+  refresh(): void {
+    for (const r of this.refreshables) r.refresh();
   }
 
   getContentElement(): HTMLElement {

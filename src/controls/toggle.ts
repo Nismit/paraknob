@@ -69,6 +69,10 @@ export class ToggleControl {
     this.valueEl.textContent = isOn ? this.onLabel : this.offLabel;
   }
 
+  refresh(): void {
+    this.updateDisplay();
+  }
+
   dispose(): void {
     this.barEl.removeEventListener('click', this.onClick);
   }

@@ -77,5 +77,10 @@ export class SelectControl {
     (this.target as Record<string, string>)[this.key] = v;
   }
 
+  refresh(): void {
+    this.valueEl.textContent = this.value;
+    this.selectEl.value = this.value;
+  }
+
   dispose(): void {}
 }

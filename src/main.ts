@@ -54,6 +54,7 @@ knob.addButton('Reset Params', () => {
   params.speed = 0.5;
   params.intensity = 1.0;
   params.count = 10;
+  knob.refresh();
   showLog(
     `Reset — speed: ${params.speed}, intensity: ${params.intensity}, count: ${params.count}`,
   );
@@ -65,6 +66,7 @@ transformFolder.addButton('Randomize', () => {
   position.x = Math.round((Math.random() * 10 - 5) * 100) / 100;
   position.y = Math.round((Math.random() * 10 - 5) * 100) / 100;
   position.z = Math.round((Math.random() * 10 - 5) * 100) / 100;
+  transformFolder.refresh();
   showLog(`Randomize — x: ${position.x}, y: ${position.y}, z: ${position.z}`);
 });
 
