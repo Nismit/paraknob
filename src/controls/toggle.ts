@@ -9,7 +9,10 @@ export class ToggleControl {
   readonly element: HTMLElement;
   private target: object;
   private key: string;
-  private trackEl: HTMLElement;
+  private onLabel: string;
+  private offLabel: string;
+  private barEl: HTMLElement;
+  private valueEl: HTMLElement;
   private onChange?: (value: number) => void;
   private onClick: () => void;
 
@@ -21,46 +24,26 @@ export class ToggleControl {
   ) {
     this.target = target;
     this.key = key;
+    this.onLabel = config.onLabel ?? '1';
+    this.offLabel = config.offLabel ?? '0';
     this.onChange = onChange;
-
-    const onLabel = config.onLabel ?? '1';
-    const offLabel = config.offLabel ?? '0';
 
     this.element = document.createElement('div');
     this.element.className = 'control control-toggle';
 
-    const bar = document.createElement('div');
-    bar.className = 'toggle-bar';
+    this.barEl = document.createElement('div');
+    this.barEl.className = 'toggle-bar';
 
     const labelEl = document.createElement('span');
     labelEl.className = 'toggle-label';
     labelEl.textContent = config.label ?? key;
 
-    const right = document.createElement('div');
-    right.className = 'toggle-right';
+    this.valueEl = document.createElement('span');
+    this.valueEl.className = 'toggle-value';
 
-    const offSpan = document.createElement('span');
-    offSpan.className = 'toggle-state-label toggle-off-label';
-    offSpan.textContent = offLabel;
-
-    this.trackEl = document.createElement('div');
-    this.trackEl.className = 'toggle-track';
-
-    const thumb = document.createElement('div');
-    thumb.className = 'toggle-thumb';
-    this.trackEl.appendChild(thumb);
-
-    const onSpan = document.createElement('span');
-    onSpan.className = 'toggle-state-label toggle-on-label';
-    onSpan.textContent = onLabel;
-
-    right.appendChild(offSpan);
-    right.appendChild(this.trackEl);
-    right.appendChild(onSpan);
-
-    bar.appendChild(labelEl);
-    bar.appendChild(right);
-    this.element.appendChild(bar);
+    this.barEl.appendChild(labelEl);
+    this.barEl.appendChild(this.valueEl);
+    this.element.appendChild(this.barEl);
 
     this.updateDisplay();
 
@@ -69,7 +52,7 @@ export class ToggleControl {
       this.updateDisplay();
       this.onChange?.(this.value);
     };
-    bar.addEventListener('click', this.onClick);
+    this.barEl.addEventListener('click', this.onClick);
   }
 
   private get value(): number {
@@ -81,8 +64,12 @@ export class ToggleControl {
   }
 
   private updateDisplay(): void {
-    this.element.classList.toggle('toggle-on', this.value !== 0);
+    const isOn = this.value !== 0;
+    this.barEl.classList.toggle('toggle-on', isOn);
+    this.valueEl.textContent = isOn ? this.onLabel : this.offLabel;
   }
 
-  dispose(): void {}
+  dispose(): void {
+    this.barEl.removeEventListener('click', this.onClick);
+  }
 }

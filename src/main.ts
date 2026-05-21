@@ -13,6 +13,20 @@ const params = {
 
 const position = { x: 0, y: 0, z: 0 };
 
+// Feedback display for button demo
+const log = document.createElement('div');
+log.style.cssText =
+  'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
+  'color:#888;font-family:system-ui,sans-serif;font-size:12px;' +
+  'background:rgba(0,0,0,0.5);padding:6px 14px;border-radius:4px;' +
+  'pointer-events:none;white-space:nowrap;';
+log.textContent = 'Press a button to see feedback';
+document.body.appendChild(log);
+
+const showLog = (msg: string) => {
+  log.textContent = msg;
+};
+
 const knob = new ParaKnob();
 
 knob.add(params, {
@@ -36,19 +50,22 @@ knob.add(params, {
   },
 });
 
-knob.addButton('Reset', () => {
+knob.addButton('Reset Params', () => {
   params.speed = 0.5;
   params.intensity = 1.0;
-  console.log('Reset!');
+  params.count = 10;
+  showLog(
+    `Reset — speed: ${params.speed}, intensity: ${params.intensity}, count: ${params.count}`,
+  );
 });
 
 const transformFolder = knob.addFolder({ title: 'Transform' });
 transformFolder.add(position);
 transformFolder.addButton('Randomize', () => {
-  position.x = Math.random() * 10 - 5;
-  position.y = Math.random() * 10 - 5;
-  position.z = Math.random() * 10 - 5;
-  console.log('Randomized:', position);
+  position.x = Math.round((Math.random() * 10 - 5) * 100) / 100;
+  position.y = Math.round((Math.random() * 10 - 5) * 100) / 100;
+  position.z = Math.round((Math.random() * 10 - 5) * 100) / 100;
+  showLog(`Randomize — x: ${position.x}, y: ${position.y}, z: ${position.z}`);
 });
 
 const visualFolder = knob.addFolder({ title: 'Visual', expanded: false });
