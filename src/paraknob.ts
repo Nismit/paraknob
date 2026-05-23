@@ -101,6 +101,7 @@ export class ParaKnob {
       () => {
         this.host.style.right = 'auto';
         this.host.style.transition = '';
+        this.header.classList.remove('snapping');
       },
       () => {
         this.snapToBounds();
@@ -126,6 +127,7 @@ export class ParaKnob {
 
     if (Math.abs(targetLeft - rect.left) < 1 && Math.abs(targetTop - rect.top) < 1) return;
 
+    this.header.classList.add('snapping');
     this.host.style.transition =
       'left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
     this.host.style.left = `${targetLeft}px`;
@@ -133,6 +135,7 @@ export class ParaKnob {
 
     const cleanup = () => {
       this.host.style.transition = '';
+      this.header.classList.remove('snapping');
       this.host.removeEventListener('transitionend', cleanup);
     };
     this.host.addEventListener('transitionend', cleanup);

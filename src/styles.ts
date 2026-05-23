@@ -35,6 +35,11 @@ export const styles = `
   align-items: center;
   height: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.3s ease;
+}
+
+.header.snapping {
+  background: rgba(var(--accent-rgb), 0.15);
 }
 
 .chevron {
