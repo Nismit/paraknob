@@ -95,9 +95,47 @@ export class ParaKnob {
     }
 
     const dragHandle = this.header.querySelector('.drag-handle') as HTMLElement;
-    this.cleanupDrag = createDragHandler(this.host, dragHandle, () => {
-      this.host.style.right = 'auto';
-    });
+    this.cleanupDrag = createDragHandler(
+      this.host,
+      dragHandle,
+      () => {
+        this.host.style.right = 'auto';
+        this.host.style.transition = '';
+      },
+      () => {
+        this.snapToBounds();
+      },
+    );
+  }
+
+  private snapToBounds(): void {
+    const rect = this.host.getBoundingClientRect();
+    const headerHeight = this.header.getBoundingClientRect().height;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const minVisibleWidth = 80;
+
+    let targetLeft = parseFloat(this.host.style.left) || rect.left;
+    let targetTop = parseFloat(this.host.style.top) || rect.top;
+
+    targetTop = Math.max(0, Math.min(targetTop, vh - headerHeight));
+    targetLeft = Math.max(
+      -(rect.width - minVisibleWidth),
+      Math.min(targetLeft, vw - minVisibleWidth),
+    );
+
+    if (Math.abs(targetLeft - rect.left) < 1 && Math.abs(targetTop - rect.top) < 1) return;
+
+    this.host.style.transition =
+      'left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    this.host.style.left = `${targetLeft}px`;
+    this.host.style.top = `${targetTop}px`;
+
+    const cleanup = () => {
+      this.host.style.transition = '';
+      this.host.removeEventListener('transitionend', cleanup);
+    };
+    this.host.addEventListener('transitionend', cleanup);
   }
 
   private disableFloating(): void {
