@@ -35,8 +35,12 @@ export const styles = `
   align-items: center;
   height: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.3s ease;
 }
 
+.header.dragging {
+  background: rgba(var(--accent-rgb), 0.15);
+}
 .chevron {
   display: flex;
   align-items: center;
