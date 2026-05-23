@@ -38,10 +38,9 @@ export const styles = `
   transition: background 0.3s ease;
 }
 
-.header.snapping {
+.header.dragging {
   background: rgba(var(--accent-rgb), 0.15);
 }
-
 .chevron {
   display: flex;
   align-items: center;
